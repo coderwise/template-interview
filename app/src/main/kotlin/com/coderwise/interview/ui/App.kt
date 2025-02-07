@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.coderwise.interview.ui.details.DetailsRoute
 import com.coderwise.interview.ui.details.DetailsScreen
 import com.coderwise.interview.ui.list.ListRoute
@@ -28,11 +29,11 @@ fun App() {
         ) {
             composable<ListRoute> {
                 ListScreen(
-                    onDetailsClick = { navController.navigate(DetailsRoute) }
+                    onDetailsClick = { itemId -> navController.navigate(DetailsRoute(itemId)) }
                 )
             }
-            composable<DetailsRoute> {
-                DetailsScreen()
+            composable<DetailsRoute> { backStackEntry ->
+                DetailsScreen(args = backStackEntry.toRoute())
             }
         }
     }

@@ -6,6 +6,6 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val uiModule = module {
-    viewModel { ListViewModel() }
-    viewModel { DetailsViewModel() }
+    viewModel { ListViewModel(get()) }
+    viewModel { DetailsViewModel(get(), get()) }
 }
