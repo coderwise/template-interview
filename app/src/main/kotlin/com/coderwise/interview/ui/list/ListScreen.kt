@@ -27,7 +27,10 @@ fun ListScreen(
 
     ListContent(
         items = items,
-        onItemClicked = onDetailsClick
+        onItemClicked = { itemId ->
+            viewModel.onItemClicked(itemId) // Communicate with the ViewModel
+            onDetailsClick(itemId) // Navigate to the details screen
+        }
     )
 }
 
