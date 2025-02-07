@@ -23,28 +23,35 @@ fun ListScreen(
     onDetailsClick: (Int) -> Unit = {},
     viewModel: ListViewModel = koinViewModel()
 ) {
-    val items by viewModel.items.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     ListContent(
-        items = items,
-        onItemClicked = onDetailsClick
+        uiState = uiState,
+        onIntent = { intent ->
+            when (intent) {
+                is ListIntent.ItemClicked -> onDetailsClick(intent.itemId)
+            }
+            viewModel.onIntent(intent)
+        }
     )
 }
 
 @Composable
 private fun ListContent(
-    items: List<Item>,
-    onItemClicked: (Int) -> Unit = {},
+    uiState: ListUiState,
+    onIntent: (ListIntent) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        items(items.size) { index ->
+        items(uiState.items.size) { index ->
             ListItem(
-                item = items[index],
+                item = uiState.items[index],
                 modifier = Modifier
                     .padding(4.dp)
-                    .clickable { onItemClicked(items[index].id) }
+                    .clickable {
+                        onIntent(ListIntent.ItemClicked(uiState.items[index].id))
+                    }
             )
         }
     }
@@ -67,16 +74,18 @@ private fun ListItem(
 private fun ListScreenPreview() {
     AppTheme {
         ListContent(
-            items = List(10) {
-                Item(
-                    id = it,
-                    name = "Item $it",
-                    description = "Description $it",
-                    price = it.toDouble(),
-                    imageUrl = ""
-                )
-            },
-            onItemClicked = {}
+            uiState = ListUiState(
+                List(10) {
+                    Item(
+                        id = it,
+                        name = "Item $it",
+                        description = "Description $it",
+                        price = it.toDouble(),
+                        imageUrl = ""
+                    )
+                },
+            ),
+            onIntent = {}
         )
     }
 }
